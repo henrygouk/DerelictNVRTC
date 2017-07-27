@@ -1,0 +1,12 @@
+{
+	"name": "derelict-nvrtc",
+	"authors": [
+		"Henry Gouk"
+	],
+	"dependencies": {
+		"derelict-util": "~>3.0.0-beta.1"
+	},
+	"description": "A dynamic binding to the NVRTC API.",
+	"copyright": "Copyright © 2017, Henry Gouk",
+	"license": "Boost"
+}
