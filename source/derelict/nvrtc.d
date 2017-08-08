@@ -44,35 +44,31 @@ private
     else
         static assert(0, "Need to implement NVRTC libNames for this operating system.");
 
-    enum ftMixin = q{
-        string[][string] functionTypes = [
-            "nvrtcGetErrorString": ["const char *", "nvrtcResult"],
-            "nvrtcVersion": ["nvrtcResult", "int *", "int *"],
-            "nvrtcCreateProgram": ["nvrtcResult", "nvrtcProgram *", "const char *", "const char *", "int", "const char **",
-                "const char **"],
-            "nvrtcDestroyProgram": ["nvrtcResult", "nvrtcProgram *"],
-            "nvrtcCompileProgram": ["nvrtcResult", "nvrtcProgram, int", "const char **"],
-            "nvrtcGetPTXSize": ["nvrtcResult", "nvrtcProgram", "size_t *"],
-            "nvrtcGetPTX": ["nvrtcResult", "nvrtcProgram", "char *"],
-            "nvrtcGetProgramLogSize": ["nvrtcResult", "nvrtcProgram", "size_t *"],
-            "nvrtcGetProgramLog": ["nvrtcResult", "nvrtcProgram", "char *"],
-            "nvrtcAddNameExpression": ["nvrtcResult", "nvrtcProgram", "const char **"],
-            "nvrtcGetLoweredName": ["nvrtcResult", "nvrtcProgram", "const char *", "const char **"]
-        ];
-    };
+    enum functionTypes = [
+        ["nvrtcGetErrorString", "const char *", "nvrtcResult"],
+        ["nvrtcVersion", "nvrtcResult", "int *", "int *"],
+        ["nvrtcCreateProgram", "nvrtcResult", "nvrtcProgram *", "const char *", "const char *", "int", "const char **",
+            "const char **"],
+        ["nvrtcDestroyProgram", "nvrtcResult", "nvrtcProgram *"],
+        ["nvrtcCompileProgram", "nvrtcResult", "nvrtcProgram, int", "const char **"],
+        ["nvrtcGetPTXSize", "nvrtcResult", "nvrtcProgram", "size_t *"],
+        ["nvrtcGetPTX", "nvrtcResult", "nvrtcProgram", "char *"],
+        ["nvrtcGetProgramLogSize", "nvrtcResult", "nvrtcProgram", "size_t *"],
+        ["nvrtcGetProgramLog", "nvrtcResult", "nvrtcProgram", "char *"],
+        ["nvrtcAddNameExpression", "nvrtcResult", "nvrtcProgram", "const char **"],
+        ["nvrtcGetLoweredName", "nvrtcResult", "nvrtcProgram", "const char *", "const char **"]
+    ];
 
     string generateFunctionAliases()
     {
         import std.algorithm : joiner;
         import std.conv : to;
 
-        mixin(ftMixin);
-
         string ret;
 
-        foreach(fn, ft; functionTypes)
+        foreach(ft; functionTypes)
         {
-            ret ~= "alias da_" ~ fn ~ " = " ~ ft[0] ~ " function(" ~ ft[1 .. $].joiner(",").to!string ~ ");";
+            ret ~= "alias da_" ~ ft[0] ~ " = " ~ ft[1] ~ " function(" ~ ft[2 .. $].joiner(",").to!string ~ ");";
         }
 
         return ret;
@@ -80,13 +76,11 @@ private
 
     string generateFunctionPointers()
     {
-        mixin(ftMixin);
-
         string ret;
 
-        foreach(fn, ft; functionTypes)
+        foreach(ft; functionTypes)
         {
-            ret ~= "da_" ~ fn ~ " " ~ fn ~ ";";
+            ret ~= "da_" ~ ft[0] ~ " " ~ ft[0] ~ ";";
         }
 
         return ret;
@@ -94,13 +88,11 @@ private
 
     string generateFunctionBinds()
     {
-        mixin(ftMixin);
-
         string ret;
 
-        foreach(fn, ft; functionTypes)
+        foreach(ft; functionTypes)
         {
-            ret ~= "bindFunc(cast(void**)&" ~ fn ~ ", \"" ~ fn ~ "\");";
+            ret ~= "bindFunc(cast(void**)&" ~ ft[0] ~ ", \"" ~ ft[0] ~ "\");";
         }
 
         return ret;
